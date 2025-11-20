@@ -1,4 +1,5 @@
 from Enums import HatchLevel, SpeciesMultiplier, ChargeMultiplier
+import pandas as pd
 
 DATA_DIR = "D:\\DMTNN\\"
 
@@ -41,6 +42,26 @@ def genDataSet():
             for speciesMultiplier in SpeciesMultiplier:
                 genData(hatchLevel, chargeMultiplier, speciesMultiplier)
 
-genDataSet()
+def readDataSet(hatchLevel: HatchLevel, chargeMultiplier: ChargeMultiplier, speciesMultiplier: SpeciesMultiplier):
+    file_name = f"{DATA_DIR}DMTNN-{hatchLevel.name}-{chargeMultiplier.name}-{speciesMultiplier.name}.txt"
+    file = open(file_name)
+    allLines = file.readlines()
+    
+    levels, reinforcements, experiences = [],[],[]
+    
+    for i in range(len(allLines)):
+        status = allLines[i].split("|")
+        levels.append(int(status[0].split(":")[1]))
+        reinforcements.append(int(status[1].split(":")[1]))
+        experiences.append(float(status[2].split(":")[1]))
 
+    dataSet = pd.DataFrame({
+        'Level': levels,
+        'Reinforcement': reinforcements,
+        'Experience': experiences
+    })
 
+    return dataSet
+
+# genDataSet()
+# readDataSet(HatchLevel.LEVEL5, ChargeMultiplier.REGULAR_CHARGE, SpeciesMultiplier.DIFFERENT_SPECIES)
