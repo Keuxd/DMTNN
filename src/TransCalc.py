@@ -25,6 +25,30 @@ def calcExperience(level: int, clone: int, hatchLevel: HatchLevel, chargeMultipl
     
     return (clone * 5 + level + 250) * (hatchLevel.value * speciesMultiplier.value) * chargeMultiplier.value / 1400
 
+def genDataForNeuralEducator(hatchLevel: HatchLevel, chargeMultiplier: ChargeMultiplier, speciesMultiplier: SpeciesMultiplier):
+    file_name = f"{DATA_DIR}DMTNN-{hatchLevel.name}-{chargeMultiplier.name}-{speciesMultiplier.name}.txt"
+    content = f"Nome\nDMTNN-{hatchLevel.name}-{chargeMultiplier.name}-{speciesMultiplier.name}\nEntradas\n\n\nSaidas\n\n"
+
+    # 3,4 -> Entradas | 6 -> Saidas
+    lines = content.splitlines()
+
+    for i in range(MIN_LEVEL, int(MAX_LEVEL / 2) + 1):
+        for j in range(MIN_CLONE, int(MAX_CLONE / 2) + 1):
+            lines[3] += f"{i},"
+            lines[4] += f"{j},"
+            lines[6] += f"{round(calcExperience(i, j, hatchLevel, chargeMultiplier, speciesMultiplier), 2)},"
+
+    lines[3] = lines[3][:-1]
+    lines[4] = lines[4][:-1]
+    lines[6] = lines[6][:-1]
+
+    finalContent = ""
+    for i in range(len(lines)):
+        finalContent += lines[i] + "\n"
+
+    with open(file_name, 'w') as file:
+        file.write(finalContent)
+
 def genData(hatchLevel: HatchLevel, chargeMultiplier: ChargeMultiplier, speciesMultiplier: SpeciesMultiplier):
     file_name = f"{DATA_DIR}DMTNN-{hatchLevel.name}-{chargeMultiplier.name}-{speciesMultiplier.name}.txt"
     content = ""
@@ -63,5 +87,6 @@ def readDataSet(hatchLevel: HatchLevel, chargeMultiplier: ChargeMultiplier, spec
 
     return dataSet
 
+genDataForNeuralEducator(HatchLevel.LEVEL5, ChargeMultiplier.REGULAR_CHARGE, SpeciesMultiplier.DIFFERENT_SPECIES)
 # genDataSet()
 # readDataSet(HatchLevel.LEVEL5, ChargeMultiplier.REGULAR_CHARGE, SpeciesMultiplier.DIFFERENT_SPECIES)
